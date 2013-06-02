@@ -1,0 +1,12 @@
+﻿<div>
+    {{message}}
+    <form>
+        Käyttäjänimi:
+        <input type="text" ng-model="username"/><br />
+        Salasana:
+        <input type="password" ng-model="password"/><br />
+        <button ng-click="login(username, password)">Kirjaudu</button>
+        <button ng-click="logout()">Logout</button>
+    </form>
+</div>
+<a href="#/test">Testataan hakea kirjautuneen käyttäjän suosikit.</a>
