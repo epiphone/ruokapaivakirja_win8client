@@ -1,0 +1,87 @@
+<div class="row">
+
+  <!-- FOOD SEARCH & RESULTS -->
+  <div class="span6 food-search">
+    <div class="input-append">
+      <input type="text" ng-model="query" ng-change="search(query)" autofocus="autofocus" placeholder="Hae elintarvikkeita">
+      <button class="btn btn-primary" type="button"><i ng-class="queryLoading ? 'icon-refresh icon-spin' : 'icon-search'" class="icon-white"></i></button>
+    </div>
+    <!-- FAVOURITES -->
+    <div ng-show="favourites.length > 0" class="favourites">
+      <strong>Suosikit:</strong>
+      <div ng-repeat="fav in favourites">
+        <a href="" ng-click="selectFood(fav.fid)">{{fav.name|title}}</a>
+      </div>
+    </div>
+    <!-- SEARCH RESULTS -->
+    <div class="results">
+      <strong>Hakutulokset:</strong>
+      <div ng-repeat="res in results">
+        <a href="" ng-click="selectFood(res[0])">{{res[1]}}</a>
+      </div>
+      <div ng-show="results == []">Ei hakutuloksia</div>
+    </div>
+  </div>
+
+  <!-- FOOD DETAILS -->
+  <div class="span6" ng-switch on="isFoodLoading">
+    <div ng-switch-when="false">
+      <h3>{{food.name|title}}</h3>
+
+      Annos: <input type="number" class="input-mini" ng-model="bite.amount" min="1" max="10000" required/> grammaa
+      <div ng-switch on="foodInFavourites(food['_id'])" class="pull-right">
+        <button class="btn btn-success" ng-click="openModal()">Lisää annos <i class="icon-plus icon-white"></i></button>
+        <button  ng-switch-when="true" class="btn btn-danger" ng-click="removeFavourite(food['_id'])">Poista suosikeista <i ng-class="favouriteLoading ? 'icon-refresh icon-spin' : 'icon-remove'" class="icon-white"></i></button>
+        <button  ng-switch-default class="btn btn-warning" ng-click="addFavourite(food['_id'], food.name)">Lisää suosikkeihin <i ng-class="favouriteLoading ? 'icon-refresh icon-spin' : 'icon-star'" class="icon-white"></i></button>
+      </div>
+      <table class="table table-hover">
+        <tr class="info">
+          <th>Ravintotekijä</th>
+          <th>Pitoisuus</th>
+          <th>Yksikkö</th>
+        </tr>
+        <tr class="info">
+          <td colspan="3">Perusravintotekijät</td>
+        </tr>
+        <tr ng-repeat='item in ["energia, laskennallinen", "hiilihydraatti imeytyvä", "rasva", "proteiini"]'>
+          <td>{{item}}</td>
+          <td>{{food.data[item][0] / 100 * bite.amount | number:1}}</td>
+          <td>{{food.data[item][1]}}</td>
+        </tr>
+        <tr class="info">
+          <td colspan="3">Vitamiinit</td>
+        </tr>
+        <tr ng-repeat='item in ["C-vitamiini", "D-vitamiini"]'>
+          <td>{{item}}</td>
+          <td>{{food.data[item][0] / 100 * bite.amount | number:1}}</td>
+          <td>{{food.data[item][1]}}</td>
+        </tr>
+      </table>
+    </div>
+    <div ng-switch-when="true">Lataa...</div>
+    <div ng-switch-default>Hae elintarvikkeita</div>
+  </div>
+
+  <!-- MODAL FOR ADDING A BITE -->
+  <div id="modal" class="modal hide fade" tabindex="-1" role="dialog">
+    <div class="modal-header">
+      <h4>Lisää annos</h4>
+    </div>
+    <div class="modal-body" ng-switch on="addStatus">
+      <div ng-switch-when="loading">Lisätään annosta...</div>
+      <div ng-switch-when="success">Annos lisätty!</div>
+      <div ng-switch-when="error">Annoksen lisääminen epäonnistui</div>
+      <div ng-switch-default>
+        <p>{{food.name|title}}, <strong>{{bite.amount}}g</strong></p>
+        Päivämäärä: <input type="text" ng-model="bite.date" required pattern="(0?[1-9]|[12][0-9]|30|31)\.(0?[1-9]|1[0-2])\.\d{2,4}"/>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-success" ng-show="addStatus == 'started'" ng-click="addBite()">Lisää</button>
+      <button class="btn btn-danger" ng-hide="addStatus == 'success'" ng-click="closeModal()">Peruuta <i ng-show="addStatus == 'loading'" class="icon-refresh icon-spin"></i></button>
+      <button class="btn btn-success" ng-show="addStatus == 'success'" ng-click="closeModal()">Valmis</button>
+    </div>
+  </div>
+
+</div> <!-- /.row -->
+
