@@ -5,7 +5,7 @@
     <title>Ruokapäiväkirja</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 
-    <link href="//Microsoft.WinJS.1.0/css/ui-light.css" rel="stylesheet" />
+    <!--<link href="//Microsoft.WinJS.1.0/css/ui-light.css" rel="stylesheet" />-->
     <script src="lib/jquery-1.8.2-win8-1.0.min.js"></script>
     <script>jQuery.isUnsafe = true;</script>
     <script src="//Microsoft.WinJS.1.0/js/base.js"></script>
@@ -24,7 +24,8 @@
             <div class="container">
                 <a class="brand" href="#/">Ruokapäiväkirja</a>
                 <span ng-show="loggedIn()">
-                    <a href="#/foods" class="btn btn-success pull-right {{navClass('/foods')}}">Lisää annos <i class="icon icon-plus icon-white"></i></a>
+                    <button ng-click="logout()" class="btn btn-danger pull-right">Kirjaudu ulos <i class="icon icon-off icon-white"></i></button>
+                    <a href="#/foods" class="btn btn-success pull-right {{navClass('/foods')}}" style="margin-right: 10px;">Lisää annos <i class="icon icon-plus icon-white"></i></a>
                     <a href="#/" class="btn btn-info pull-right {{navClass('/')}}" style="margin-right: 10px;">Näytä annokset <i class="icon icon-list icon-white"></i></a>
                 </span>
             </div>

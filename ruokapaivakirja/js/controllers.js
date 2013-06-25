@@ -3,7 +3,7 @@
 
  angular.module("app.controllers", [])
 
-// Navbar - used to hide nav buttons if the user isn't logged in
+// Navbar - hide nav buttons if the user isn't logged in etc.
 .controller("NavCtrl", function ($scope, $location, UserService) {
     $scope.loggedIn = function() { return UserService.isLoggedIn(); };
 
@@ -11,6 +11,11 @@
         var path = $location.path();
         return link == path ? "disabled" : "";
     };
+
+    $scope.logout = function () {
+        UserService.logout();
+        $location.path("/login");
+    }
 })
 
 // Login

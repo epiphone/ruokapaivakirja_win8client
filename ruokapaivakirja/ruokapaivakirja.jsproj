@@ -46,8 +46,9 @@
   <PropertyGroup>
     <TargetPlatformIdentifier>Windows</TargetPlatformIdentifier>
     <TargetPlatformVersion>8.0</TargetPlatformVersion>
-    <DefaultLanguage>en-US</DefaultLanguage>
+    <DefaultLanguage>fi</DefaultLanguage>
     <PackageCertificateKeyFile>ruokapaivakirja_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
   </PropertyGroup>
   <ItemGroup>
     <AppxManifest Include="package.appxmanifest">
@@ -67,10 +68,12 @@
     <Content Include="font\fontawesome-webfont.ttf" />
     <Content Include="font\fontawesome-webfont.woff" />
     <Content Include="font\FontAwesome.otf" />
+    <Content Include="images\badgelogo.png" />
     <Content Include="images\logo.png" />
     <Content Include="images\smalllogo.png" />
     <Content Include="images\splashscreen.png" />
     <Content Include="images\storelogo.png" />
+    <Content Include="images\widelogo.png" />
     <Content Include="img\animated-overlay.gif" />
     <Content Include="img\glyphicons-halflings-white.png" />
     <Content Include="img\glyphicons-halflings.png" />
@@ -108,6 +111,7 @@
     <Content Include="lib\jquery-ui-touch-punch.js" />
     <Content Include="lib\ui-bootstrap-tpls-0.3.0.min.js" />
     <Content Include="lib\win8jquery.js" />
+    <None Include="Package.StoreAssociation.xml" />
     <Content Include="partials\foods.html" />
     <Content Include="partials\index.html" />
     <Content Include="partials\login.html" />
