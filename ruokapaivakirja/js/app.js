@@ -1,4 +1,4 @@
-/*
+﻿/*
 Ruokapäiväkirja Web Client
 Aleksi Pekkala
 */

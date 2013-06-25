@@ -1,4 +1,4 @@
-/*global d3, $*/
+﻿/*global d3, $*/
 "use strict";
 
 /* Directives */

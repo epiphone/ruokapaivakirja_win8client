@@ -1,4 +1,4 @@
- /* global d3, $, alert */
+﻿ /* global d3, $, alert */
  "use strict";
 
  angular.module("app.controllers", [])

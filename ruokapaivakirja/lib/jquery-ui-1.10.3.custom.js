@@ -1,4 +1,4 @@
-/*! jQuery UI - v1.10.3 - 2013-06-18
+﻿/*! jQuery UI - v1.10.3 - 2013-06-18
 * http://jqueryui.com
 * Includes: jquery.ui.core.js, jquery.ui.widget.js, jquery.ui.mouse.js, jquery.ui.position.js, jquery.ui.datepicker.js, jquery.ui.slider.js, jquery.ui.effect.js
 * Copyright 2013 jQuery Foundation and other contributors Licensed MIT */

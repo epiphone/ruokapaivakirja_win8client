@@ -56,7 +56,6 @@
     </AppxManifest>
     <Content Include="css\bootstrap-metro.css" />
     <Content Include="css\bootstrap-responsive.css" />
-    <Content Include="css\bootstrap-responsive.min.css" />
     <Content Include="css\bootstrap.css" />
     <Content Include="css\bootstrap.min.css" />
     <Content Include="css\font-awesome.css" />
