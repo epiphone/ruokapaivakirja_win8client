@@ -48,7 +48,7 @@
     <TargetPlatformVersion>8.0</TargetPlatformVersion>
     <DefaultLanguage>fi</DefaultLanguage>
     <PackageCertificateKeyFile>ruokapaivakirja_TemporaryKey.pfx</PackageCertificateKeyFile>
-    <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
+    <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
   </PropertyGroup>
   <ItemGroup>
     <AppxManifest Include="package.appxmanifest">
@@ -99,17 +99,14 @@
     <Content Include="js\services.js" />
     <Content Include="lib\angular-ui-bootstrap-0.3.0.min.js" />
     <Content Include="lib\angular-v1.1.5.js" />
-    <Content Include="lib\angular.js" />
     <Content Include="lib\bootstrap.js" />
     <Content Include="lib\crypto_hmac_sha1.js" />
     <Content Include="lib\crypto_sha1.js" />
     <Content Include="lib\d3.v3.js" />
     <Content Include="lib\jquery-1.8.2-win8-1.0.min.js" />
-    <Content Include="lib\jquery-2.0.2.js" />
     <Content Include="lib\jquery-ui-1.10.3.custom.js" />
     <Content Include="lib\jquery-ui-touch-punch.js" />
-    <Content Include="lib\ui-bootstrap-tpls-0.3.0.min.js" />
-    <Content Include="lib\win8jquery.js" />
+    <Content Include="partials\privacy.html" />
     <None Include="Package.StoreAssociation.xml" />
     <Content Include="partials\foods.html" />
     <Content Include="partials\index.html" />

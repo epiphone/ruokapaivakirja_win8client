@@ -826,7 +826,11 @@ function startingTag(element) {
   } catch(e) {}
   // As Per DOM Standards
   var TEXT_NODE = 3;
-  var elemHtml = jqLite('<div>').append(element).html();
+    //var elemHtml = jqLite('<div>').append(element).html();
+  var elemHtml;
+  MSApp.execUnsafeLocalFunction(function () {
+      elemHtml = jqLite('<div>').append(element).html();
+  });
   try {
     return element[0].nodeType === TEXT_NODE ? lowercase(elemHtml) :
         elemHtml.
@@ -3485,7 +3489,9 @@ var $AnimatorProvider = function() {
           if (after) {
             after.after(element);
           } else {
-            parent.append(element);
+              MSApp.execUnsafeLocalFunction(function () {
+                  parent.append(element);
+              });
           }
         }
   
@@ -11689,8 +11695,10 @@ var htmlAnchorDirective = valueFn({
       // add a comment node to anchors to workaround IE bug that causes element content to be reset
       // to new attribute content if attribute is updated with value containing @ and element also
       // contains value with @
-      // see issue #1949
-      element.append(document.createComment('IE fix'));
+        // see issue #1949
+      MSApp.execUnsafeLocalFunction(function () {
+          element.append(document.createComment('IE fix'));
+      });
     }
 
     return function(scope, element) {
@@ -15976,7 +15984,9 @@ var ngSwitchDefaultDirective = ngDirective({
 var ngTranscludeDirective = ngDirective({
   controller: ['$transclude', '$element', function($transclude, $element) {
     $transclude(function(clone) {
-      $element.append(clone);
+        MSApp.execUnsafeLocalFunction(function () {
+            $element.append(clone);
+        });
     });
   }]
 });
@@ -16734,7 +16744,9 @@ var selectDirective = ['$compile', '$parse', function($compile,   $parse) {
               };
               existingOptions = [existingParent];
               optionGroupsCache.push(existingOptions);
-              selectElement.append(existingParent.element);
+              MSApp.execUnsafeLocalFunction(function () {
+                  selectElement.append(existingParent.element);
+              });
             } else {
               existingOptions = optionGroupsCache[groupIndex];
               existingParent = existingOptions[0];  // either SELECT (no group) or OPTGROUP element
@@ -16787,7 +16799,9 @@ var selectDirective = ['$compile', '$parse', function($compile,   $parse) {
                 if (lastElement) {
                   lastElement.after(element);
                 } else {
-                  existingParent.element.append(element);
+                    MSApp.execUnsafeLocalFunction(function () {
+                        existingParent.element.append(element);
+                    });
                 }
                 lastElement = element;
               }
@@ -16873,4 +16887,4 @@ var styleDirective = valueFn({
   });
 
 })(window, document);
-angular.element(document).find('head').append('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak{display:none;}ng\\:form{display:block;}</style>');
+MSApp.execUnsafeLocalFunction(function () { angular.element(document).find('head').append('<style type="text/css">@charset "UTF-8";[ng\\:cloak],[ng-cloak],[data-ng-cloak],[x-ng-cloak],.ng-cloak,.x-ng-cloak{display:none;}ng\\:form{display:block;}</style>'); });
