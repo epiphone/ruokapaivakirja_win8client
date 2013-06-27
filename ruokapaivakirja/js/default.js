@@ -14,6 +14,10 @@ var myApp;
             if (args.detail.previousExecutionState !== activation.ApplicationExecutionState.terminated) {
                 // TODO: This application has been newly launched. Initialize
                 // your application here.
+                WinJS.Application.onsettings = function(e) {
+                    e.detail.applicationcommands = {"help": {title: "Privacy policy", href="/partials/privacy.html"}};
+                    WinJS.UI.SettingsFlyout.populateSettings(e);
+                }
             } else {
                 // TODO: This application has been reactivated from suspension.
                 // Restore application state here.
