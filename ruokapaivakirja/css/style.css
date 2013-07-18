@@ -1,11 +1,29 @@
-﻿/* FOOD SEARCH PAGE */
-.food-search .favourites {
-    background-color: #EEEEEE;
+﻿/* LOGIN PAGE */
+.login-window {
+    min-height: 400px;
+    padding: 20px 35px;
+    background-color: #FFF;
+    border-radius: 14px;
+    border: 1px solid #D3D3D3;
+}
+
+.login-window .alert {
+    margin-top: 10px;
+}
+
+/* FOOD SEARCH PAGE */
+.food-search .input-append {
+    margin-left: 0;
+}
+
+.food-search .scrollbox {
+    overflow-y: auto;
+    max-height: 450px;
 }
 
 /* BITES PAGE */
 
-#slider {
+.dateslider {
     width: 75%;
     float: left;
     margin: 40px 20px 20px 35px;
@@ -17,6 +35,7 @@
 
 .handle-tooltip {
     position: absolute;
+    min-width: 70px;
     z-index: 1020;
     display: block;
     padding: 5px;
@@ -24,7 +43,8 @@
     visibility: visible;
     margin-top: -2px;
     bottom:120%;
-    margin-left: -1.9em;
+    /*margin-left: -1.9em;*/
+    white-space: nowrap;
 }
 
 .ui-slider a {
@@ -65,13 +85,14 @@
     height: 100%;
 }
 
-.ui-datepicker-current-day {
-
+/* MAIN PAGE */
+.chart-info .btn-group button {
+    min-width: 100px;
 }
 
 /* LINE CHART */
 path {
-    stroke: steelblue;
+    stroke: #4682B4;
     stroke-width: 2;
     fill: none;
 }
@@ -81,7 +102,11 @@ path.carbs {
 }
 
 path.fat {
-    stroke: #AA3728;
+    stroke: #F89406;
+}
+
+path.protein {
+    stroke: #B94A48;
 }
 
 .axis path,
@@ -100,4 +125,98 @@ path.fat {
     stroke: none;
     fill: #e5f3f9;
     fill-opacity: 0.8;
+}
+
+/* BAR CHART */
+
+.bar.kcal {
+    fill: #4682B4;
+}
+
+.bar.carbs {
+    fill: #52B125;
+}
+
+.bar.fat {
+    fill: #F3AC2E;
+}
+
+.bar.protein {
+    fill: #B94A48;
+}
+
+
+
+/*GOALS PAGE*/
+.slider {
+    margin: 8px 10px 30px 10px;
+}
+
+.slider[areaslider] {
+    margin-top: 18px;
+}
+
+.slider-container {
+    text-align: center;
+}
+
+.slider-container:
+
+.slider-container > .span1 {
+    text-align: right;
+}
+
+.slider-container button {
+    min-width: 140px;
+}
+
+.slider-container {
+    min-height: 80px;
+}
+
+.slider-container .add-on {
+    min-width: 39px;
+}
+
+.slider .ui-slider-handle {
+    height: 3em;
+    margin-top: -0.4em;
+}
+
+.slider .handle-tooltip {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease-in-out;
+    -webkit-transition: opacity 0.2s ease-in-out;
+    -moz-transition: opacity 0.2s ease-in-out;
+    -o-transition: opacity 0.2s ease-in-out;
+}
+
+.slider .ui-slider-handle:active .handle-tooltip {
+    opacity: 1;
+}
+
+.results-container {
+    margin-top: 40px;
+}
+
+
+/*UTILITIES*/
+.faded {
+    opacity: 0.4 !important;
+}
+
+.notransition {
+    -webkit-transition: none !important;
+    -moz-transition: none !important;
+    -o-transition: none !important;
+    transition: none !important;
+}
+
+.nomargin {
+    margin: 0;
+}
+
+.td-selected {
+    background-color: #F5F7F7;
 }

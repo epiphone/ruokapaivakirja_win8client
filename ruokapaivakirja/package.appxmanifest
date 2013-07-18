@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest">
-  <Identity Name="27028AleksiP.Ruokapivkirja" Version="1.0.0.8" Publisher="CN=46CF9CBB-1DBA-4D34-8D21-D74E1383A5CA" />
+  <Identity Name="27028AleksiP.Ruokapivkirja" Version="1.0.0.9" Publisher="CN=46CF9CBB-1DBA-4D34-8D21-D74E1383A5CA" />
   <Properties>
     <DisplayName>Ruokapäiväkirja</DisplayName>
     <PublisherDisplayName>AleksiP</PublisherDisplayName>

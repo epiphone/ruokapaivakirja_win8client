@@ -3,31 +3,95 @@
 
  angular.module("app.controllers", [])
 
-// Navbar - hide nav buttons if the user isn't logged in etc.
+// Navbar - used to hide nav buttons if the user isn't logged in
 .controller("NavCtrl", function ($scope, $location, UserService) {
     $scope.loggedIn = function() { return UserService.isLoggedIn(); };
+
+    $scope.logout = function () {
+        UserService.logout();
+        $location.path("/");
+    }
 
     $scope.navClass = function(link) {
         var path = $location.path();
         return link == path ? "disabled" : "";
     };
-
-    $scope.logout = function () {
-        UserService.logout();
-        $location.path("/login");
-    }
 })
 
-// Login
+.controller("DateCtrl", function ($scope, $routeParams, $location, API, UserService) {
+    var date = $routeParams.date;
+    $scope.date = dateFromStr(date);
+    if (!date) {
+        $location.path("/");
+    }
+
+    /** "yyyyMMdd" -> Date object */
+    function dateFromStr(dateStr) {
+        return new Date(dateStr.substring(0,4), (dateStr.substring(4,6) - 1),
+            dateStr.substring(6));
+    }
+
+    function getBites() {
+        API.fetchSigned("/user/bites/" + date, "GET")
+        .success(function(response) {
+            if (response.status == "success") {
+                $scope.bites = response.data;
+            } else {
+                $location.path("/");
+            }
+        })
+        .error(function(response) {
+            $location.path("/");
+        });
+    }
+
+    $scope.removeBite = function(bite) {
+        bite.loading = true;
+        var biteId = bite["_id"];
+        API.fetchSigned("/user/bites/" + biteId, "DELETE")
+        .success(function(response) {
+            if (response.status == "success") {
+                $scope.bites.splice($scope.bites.indexOf(bite), 1);
+            } else {
+                alert("Poistaminen epäonnistui!");
+                console.log("BITE REMOVE ERROR=" + JSON.stringify(response));
+                bite.loading = false;
+            }
+        })
+        .error(function(response) {
+            alert("Poistaminen epäonnistui!");
+            console.log("BITE REMOVE ERROR=" + JSON.stringify(response));
+            bite.loading = false;
+        });
+    };
+
+    getBites();
+})
+
+// Login and registration
 .controller("LoginCtrl", function ($scope, $http, $location, API, UserService) {
     $scope.loginTabSelected = true;
 
-    $scope.login = function (username, password) {
+    /** Make an arbitrary request to test connecion, show error if failed. */
+    $scope.establishServerConnection = function() {
+        $scope.connectionStatus = "loading";
+        API.fetch("/foods?q=makkara")
+        .success(function() {
+            $scope.connectionStatus = "connected";
+        }).error(function() {
+            $scope.connectionStatus = "failed";
+        });
+    };
+
+    $scope.login = function(username, password) {
         $scope.loading = true;
         UserService.setCredentials(username, password);
-        API.fetchSigned("/user/favs")
+        API.fetchSigned("/user")
         .success(function(response) {
             if (response.status == "success") {
+                angular.element(".backstretch").remove();  // Remove login page background TODO: directive?
+                UserService.setGoals(response.data.goals);
+                UserService.setFavs(response.data.favs);
                 UserService.isLoggedIn(true);
                 $location.path("/");
             } else {
@@ -44,14 +108,18 @@
         });
     };
 
-    $scope.register = function (username, password, passwordAgain) {
-        if (password != passwordAgain) {
+    $scope.register = function(form) {
+        if (form.password != form.passwordAgain) {
             $scope.registerMessage = "Varmistus ei täsmää salasanaa";
             return;
         }
 
+        var userApprovalGranted = window.confirm(
+            "Huom! Tietojen säilymistä yms. ylläpitoa ei voida taata.");
+        if (!userApprovalGranted) return;
+
         $scope.loading = true;
-        UserService.setCredentials(username, password);
+        UserService.setCredentials(form.username, form.password);
         var data = {
             username: UserService.getUsername(),
             key: UserService.getPassword()
@@ -60,8 +128,9 @@
         API.fetch("/user/register", "POST", data)
         .success(function(response) {
             if (response.status == "success") {
+                angular.element(".backstretch").remove();  // Remove login page background TODO: directive?
                 UserService.isLoggedIn(true);
-                $location.path("/");
+                $location.path("/goals");
             } else {
                 if ("username" in response.data) {
                     if (response.data.username == "username taken") {
@@ -83,17 +152,112 @@
             UserService.logout();
             $scope.registerMessage = "Rekisteröinti epäonnistui";
             $scope.loading = false;
+            $scope.$apply();
         });
     };
+
+    $scope.toggleDisclaimer = function(isVisible) {
+        $scope.disclaimerIsVisible = isVisible;
+    };
+
+    $scope.establishServerConnection();
+})
+
+// Goals - user is redirected here after registration to set daily calorie goals etc.
+.controller("GoalsCtrl", function($scope, $location, API, UserService) {
+    $scope.existingGoals = UserService.getGoals();
+    $scope.newUser = !$scope.existingGoals;
+
+    $scope.activityLevels = [
+    "Ei ollenkaan",
+    "Vähän",
+    "Kohtalaisesti",
+    "Paljon",
+    "Todella paljon"
+    ];
+
+    $scope.activityDescriptions = [
+    "Istumatyö, vähän liikuntaa",
+    "Kevyttä liikuntaa 1-3 tuntia viikossa",
+    "Kohtalaisen raskasta liikuntaa 3-5 tuntia viikossa",
+    "Raskasta liikuntaa 6-7 tuntia viikossa",
+    "Raskasta liikuntaa >7 tuntia viikossa"
+    ];
+
+    $scope.isFemale = false;
+
+    $scope.cancelUpdate = function() {
+        $location.path("/");
+    };
+
+    $scope.calculateBMR = function(age, height, weight, activityLevel, isFemale) {
+        var base;
+        var activityMultipliers = [1.2, 1.375, 1.55, 1.725, 1.9];
+        if (isFemale) {
+            base = 447.593 + 9.247 * weight + 3.098 * height - 4.330 * age;
+        } else {
+            base = 88.362 + 13.397 * weight + 4.799 * height - 5.677 * age;
+        }
+        $scope.bmr = base * activityMultipliers[activityLevel];
+        return $scope.bmr;
+    };
+
+    $scope.resetDistribution = function() {
+        $scope.distribution = {min: 30, max: 85};
+    };
+
+    $scope.setGoals = function() {
+        $scope.loadingGoals = true;
+
+        var min = $scope.distribution.min;
+        var max = $scope.distribution.max;
+        var bmr = $scope.bmr;
+
+        if (_.some([min, max, bmr], function(e) { return !e || isNaN(e) || e < 1; })) {
+            $scope.errorMessage = "Virheellinen syöte";
+            $scope.loadingGoals = false;
+            return;
+        }
+
+        var payload = {
+            kcal: Math.floor(bmr),
+            carbs: Math.floor(min / 100 * bmr / 4),
+            fat: Math.floor((max - min) / 100 * bmr / 9),
+            protein: Math.floor((100 - max) / 100 * bmr / 4)
+        };
+
+        API.fetchSigned("/user/goals", "POST", payload)
+        .success(function(response) {
+            if (response.status == "success") {
+                // Set goals, redirect to index page:
+                UserService.setGoals(payload);
+                $location.path("/");
+            } else {
+                console.log("SET GOALS ERROR=" + JSON.stringify(response));
+            }
+            $scope.loadingGoals = false;
+        })
+        .error(function(response) {
+            console.log("SET GOALS ERROR=" + JSON.stringify(response));
+            $scope.loadingGoals = false;
+        });
+    };
+
+    $scope.resetDistribution();
 })
 
 // Index - list bites
-.controller("IndexCtrl", function($scope, $location, API, UserService) {
+.controller("IndexCtrl", function($scope, $location, $timeout, API, UserService) {
     // Initial sort order for bites
     $scope.order = "date";
     $scope.reverse = true;
+    $scope.goals = UserService.getGoals();
 
-    // Date object --> "yyyyMMdd"
+    $scope.goToDatePage = function (date) {
+        $location.path("/dates/" + date);
+    }
+
+    /** Date object -> "yyyyMMdd" */
     function formatDate(d) {
         var monthStr = (d.getMonth() + 1).toString(),
         month = monthStr.length == 1 ? "0" + monthStr : monthStr,
@@ -111,23 +275,33 @@
 
     $scope.getBites = function() {
         if (!$scope.slider) {
-            console.log("slider undefined");
             return;
         }
+
         $scope.bitesLoading = true;
         var params = {
             start: formatDate($scope.slider.min),
             end: formatDate($scope.slider.max)
         };
 
-        API.fetchSigned("/user/bites", "GET", params)
+        API.fetchSigned("/user/days", "GET", params)
         .success(function(response) {
             if (response.status == "success") {
-                $scope.bites = response.data;
-                $scope.bitesOrder = "date"; // Reset table order
+                var date, dates = response.data;
+                dates.forEach(function(d) {
+                    date = new Date(d.date);
+                    date.setHours(0);
+                    d.date = date;
+                    d.apiDate = formatDate(date);
+                });
+
+                $scope.dates = dates.sort(function(a,b){
+                    return a.date - b.date;
+                });
+
                 $scope.datesOrder = "date";
-                processBitesData();
-                updateChart();
+                $scope.datesReverse = true;
+                processChartData();
             } else {
                 console.log("BITES ERROR=" + JSON.stringify(response));
             }
@@ -139,50 +313,6 @@
         });
     };
 
-    function processBitesData() {  // TODO remove redundant processing
-        if (!$scope.bites) {
-            $scope.bitesByDate = null;
-        }
-
-        // Group bites by date
-        var bites = $scope.bites,
-        bite,
-        biteAdded,
-        data = [],
-        attrs = ["kcal", "protein", "fat", "carbs"];  // TODO into global variable?
-
-        for (var i in bites) {
-            bite = bites[i];
-
-            // If array already has an item with the same date, extend the item...
-            biteAdded = false;
-            for (var j in data) {
-                if (data[j].date == bite.date) {
-                    data[j].bites.push(bite);
-                    for (var attrIndex in attrs) {
-                        data[j][attrs[attrIndex]] += bite[[attrs[attrIndex]]];
-                    }
-                    biteAdded = true;
-                }
-            }
-
-            // ...otherwise push a new item
-            if (!biteAdded) {
-                data.push({
-                    date: bite.date,
-                    bites: [bite],
-                    kcal: bite.kcal,
-                    protein: bite.protein,
-                    fat: bite.fat,
-                    carbs: bite.fat
-                });
-            }
-        }
-
-        $scope.bitesByDate = data;
-        $scope.selectedItem = data[0];
-    }
-
     $scope.removeBite = function(bite) {
         bite.loading = true;
         var biteId = bite["_id"];
@@ -190,8 +320,7 @@
         .success(function(response) {
             if (response.status == "success") {
                 $scope.bites.splice($scope.bites.indexOf(bite), 1);
-                processBitesData();
-                updateChart();
+                processChartData();
             } else {
                 alert("Poistaminen epäonnistui!");
                 console.log("BITE REMOVE ERROR=" + JSON.stringify(response));
@@ -205,51 +334,70 @@
         });
     };
 
-    // "yyyyMMdd" --> Date object
-    function parseDate(dt) {
-        return new Date(dt.substr(0, 4), dt.substr(4, 2) - 1, dt.substr(6, 2));
-    }
+    /**
+     * Initialize scope variables lineChartData and barChartData, which are
+     * bound to the charts.
+     */
+     function processChartData() {
+        var lineData = {protein: [], carbs: [], fat: [], kcal: []};
+        var barData = [];
+        var dateObj;
+        var attr;
 
-    function updateChart() {
-        var data = {protein: [], carbs: [], fat: [], kcal: []},
-        bite,
-        foundMatch,
-        maxValue = 0;
+        var dates = $scope.dates;
+        var goals = $scope.goals;
 
-        // Process data
-        for (var i in $scope.bites) {
-            bite = $scope.bites[i];
-            foundMatch = false;
+        for (var i in dates) {
+            dateObj = $scope.dates[i];
 
-            for (var j in data.protein) {
-                if (data.protein[j].date == bite.date) {
-                    data.protein[j].value += bite.protein;
-                    data.carbs[j].value += bite.carbs;
-                    data.fat[j].value += bite.fat;
-                    data.kcal[j].value += bite.kcal;
-
-                    foundMatch = true;
-                    break;
-                }
+            for (var j in Object.keys(lineData)) {
+                attr = Object.keys(lineData)[j];
+                lineData[attr].push({
+                    date: dateObj.date,
+                    value: dateObj[attr]});
             }
 
-            if (!foundMatch) {
-                data.protein.push({date: bite.date, value: bite.protein});
-                data.fat.push({date: bite.date, value: bite.fat});
-                data.carbs.push({date: bite.date, value: bite.carbs});
-                data.kcal.push({date: bite.date, value: bite.kcal});
-            }
+            barData.push({
+                date: dateObj.date,
+                amounts: [
+                { name: "kcal", value: Math.floor(100 * dateObj.kcal / goals.kcal)},
+                { name: "carbs", value: Math.floor(100 * dateObj.carbs / goals.carbs)},
+                { name: "fat", value: Math.floor(100 * dateObj.fat / goals.fat)},
+                { name: "protein", value: Math.floor(100 * dateObj.protein / goals.protein)}
+                ]
+            });
         }
-
-        var chartData = {
-            entries: data,
+        $scope.lineChartData = {
+            entries: lineData,
             minDate: new Date($scope.slider.min),
             maxDate: new Date($scope.slider.max)
         };
-        $scope.chartData = chartData;
+
+        $scope.barChartData = {
+            entries: barData,
+            minDate: new Date($scope.slider.min),
+            maxDate: new Date($scope.slider.max)
+        };
+
+        blockChartButtons();
     }
 
+    /**
+     * Blocks the buttons that hightlight chart lines or bars for a second,
+     * so that a transition doesn't get interrupted by the user.
+     */
+    function blockChartButtons() {
+        $scope.chartLoading = true;
+        $timeout(function() { $scope.chartLoading = false; }, 1000);
+    }
+
+    $scope.toggleChart = function() {
+        blockChartButtons();
+        $scope.chartToShow = $scope.chartToShow == "linechart" ? "barchart" : "linechart";
+    };
+
     // Load initial bites
+    $scope.chartToShow = "linechart";
     $scope.getBites();
 })
 
@@ -277,6 +425,7 @@
             .success(function(response) {
                 if (response.status == "success") {
                     $scope.results = response.data;
+                    $scope.activeTab = "results";
                 } else {
                     console.log("FOOD QUERY ERROR=" + JSON.stringify(response));
                 }
@@ -417,5 +566,20 @@
         });
     };
 
+    $scope.getTopFoods = function() {
+        API.fetch("/topfoods")
+        .success(function(response){
+            if (response.status == "success") {
+                $scope.topFoods = response.data;
+            } else {
+                console.log("TOP10 ERROR=" + JSON.stringify(response));
+            }
+        })
+        .error(function(response) {
+            console.log("TOP10 ERROR=" + JSON.stringify(response));
+        });
+    };
+
     $scope.getFavourites();
+    $scope.getTopFoods();
 });

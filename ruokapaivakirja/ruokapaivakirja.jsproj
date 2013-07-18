@@ -56,6 +56,7 @@
     </AppxManifest>
     <Content Include="css\bootstrap-metro.css" />
     <Content Include="css\bootstrap-responsive.css" />
+    <Content Include="css\bootstrap-responsive.min.css" />
     <Content Include="css\bootstrap.css" />
     <Content Include="css\bootstrap.min.css" />
     <Content Include="css\font-awesome.css" />
@@ -74,9 +75,14 @@
     <Content Include="images\storelogo.png" />
     <Content Include="images\widelogo.png" />
     <Content Include="img\animated-overlay.gif" />
+    <Content Include="img\arches.png" />
+    <Content Include="img\bg1.png" />
+    <Content Include="img\bg2.png" />
+    <Content Include="img\cream.png" />
     <Content Include="img\glyphicons-halflings-white.png" />
     <Content Include="img\glyphicons-halflings.png" />
     <Content Include="img\spinner.gif" />
+    <Content Include="img\triangles.png" />
     <Content Include="img\ui-bg_diagonals-thick_18_b81900_40x40.png" />
     <Content Include="img\ui-bg_diagonals-thick_20_666666_40x40.png" />
     <Content Include="img\ui-bg_flat_10_000000_40x100.png" />
@@ -103,14 +109,18 @@
     <Content Include="lib\crypto_hmac_sha1.js" />
     <Content Include="lib\crypto_sha1.js" />
     <Content Include="lib\d3.v3.js" />
+    <Content Include="lib\fastclick.js" />
     <Content Include="lib\jquery-1.8.2-win8-1.0.min.js" />
     <Content Include="lib\jquery-ui-1.10.3.custom.js" />
     <Content Include="lib\jquery-ui-touch-punch.js" />
-    <Content Include="partials\privacy.html" />
-    <None Include="Package.StoreAssociation.xml" />
+    <Content Include="lib\underscore-min.js" />
+    <Content Include="partials\date.html" />
     <Content Include="partials\foods.html" />
+    <Content Include="partials\goals.html" />
     <Content Include="partials\index.html" />
     <Content Include="partials\login.html" />
+    <Content Include="partials\privacy.html" />
+    <None Include="Package.StoreAssociation.xml" />
     <None Include="ruokapaivakirja_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>

@@ -1,18 +1,19 @@
 ﻿ /* global CryptoJS */
-"use strict";
+ "use strict";
 
-/* Services */
+ /* Services */
 
 
-angular.module("app.services", [])
+ angular.module("app.services", [])
 
 // Service for sharing user information between controllers
 .factory("UserService", function(HashService) {
-    var username,
-    password,
-    loggedIn = false,
-    passwordSalt = "djn12gsiugaieufe4f8fafh";
-
+    var username;
+    var password;
+    var loggedIn = false;
+    var passwordSalt = "djn12gsiugaieufe4f8fafh";
+    var goals;
+    var favs;
 
     function getUsername() { return username; }
     function getPassword() { return password; }
@@ -35,12 +36,29 @@ angular.module("app.services", [])
         loggedIn = false;
     }
 
+    function getGoals() { return goals; }
+    function setGoals(newGoals) {
+        var attrs = ["kcal", "carbs", "fat", "protein"];
+        if (_.every(attrs, function(x) { return x in newGoals; })) {
+            goals = newGoals;
+        } else {
+            goals = null;
+        }
+    }
+
+    function getFavs() { return favs; }
+    function setFavs(newFavs) { favs = newFavs; }
+
     return {
         getUsername: getUsername,
         getPassword: getPassword,
         isLoggedIn: isLoggedIn,
         setCredentials: setCredentials,
-        logout: logout
+        logout: logout,
+        getGoals: getGoals,
+        setGoals: setGoals,
+        getFavs: getFavs,
+        setFavs: setFavs
     };
 })
 
@@ -72,14 +90,14 @@ angular.module("app.services", [])
 
 // Wrapper for API
 .factory("API", function (HashService, UserService, $http) {
-    var appName = "sovelluksen nimi",
-        appKey = "sovelluksen avain",  // TODO turha
-        urlRoot = "http://toimiiks.cloudapp.net/api/json",
-        escape = encodeURIComponent;
+    var appName = "sovelluksen nimi";
+    var appKey = "sovelluksen avain";  // TODO turha
+    var urlRoot = "http://toimiiks.cloudapp.net/api/json";
+    var escape = encodeURIComponent;
 
-        function fetch(url, method, data) {
-            method = method || "GET";
-            data = data || {};
+    function fetch(url, method, data) {
+        method = method || "GET";
+        data = data || {};
 
         // Create a HTTP request, return a promise:
         var options = {

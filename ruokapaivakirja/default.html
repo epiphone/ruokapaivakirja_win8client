@@ -26,6 +26,7 @@
                 <a class="brand" href="#/">Ruokapäiväkirja</a>
                 <span ng-show="loggedIn()">
                     <button ng-click="logout()" class="btn btn-danger pull-right">Kirjaudu ulos <i class="icon icon-off icon-white"></i></button>
+                    <a href="#/goals" class="btn btn-warning pull-right {{navClass('/goals')}}" style="margin-right: 10px;">Tavoitteet <i class="icon icon-wrench icon-white"></i></a>
                     <a href="#/foods" class="btn btn-success pull-right {{navClass('/foods')}}" style="margin-right: 10px;">Lisää annos <i class="icon icon-plus icon-white"></i></a>
                     <a href="#/" class="btn btn-info pull-right {{navClass('/')}}" style="margin-right: 10px;">Näytä annokset <i class="icon icon-list icon-white"></i></a>
                 </span>
@@ -35,6 +36,7 @@
 
     <div class="container" style="margin-top: 50px" ng-view></div>
 
+    <script src="lib/underscore-min.js"></script>
     <script src="lib/crypto_sha1.js"></script>
     <script src="lib/crypto_hmac_sha1.js"></script>
     <!--<script src="lib/jquery-2.0.2.js"></script>-->
@@ -44,6 +46,12 @@
     <script src="lib/d3.v3.js"></script>
     <script src="lib/angular-v1.1.5.js"></script>
     <!-- <script src="lib/ui-bootstrap-tpls-0.3.0.min.js"></script> -->
+    <script src="lib/fastclick.js"></script>
+    <script>
+        $(function () {
+            FastClick.attach(document.body);
+        });
+    </script>
     <script src="js/app.js"></script>
     <script src="js/services.js"></script>
     <script src="js/controllers.js"></script>
