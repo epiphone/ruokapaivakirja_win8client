@@ -9,8 +9,8 @@
         Annos: <input type="number" class="input-mini" ng-model="bite.amount" min="1" max="10000" required/> g
         <span ng-switch on="foodInFavourites(food['_id'])" class="pull-right">
           <button class="btn btn-success" ng-click="openModal()">Lisää annos <i class="icon-plus icon-white"></i></button>
-          <button  ng-switch-when="true" class="btn btn-danger" ng-click="removeFavourite(food['_id'])">Poista suosikeista <i ng-class="favouriteLoading ? 'icon-refresh icon-spin' : 'icon-remove'" class="icon-white"></i></button>
-          <button  ng-switch-default class="btn btn-warning" ng-click="addFavourite(food['_id'], food.name)">Lisää suosikkeihin <i ng-class="favouriteLoading ? 'icon-refresh icon-spin' : 'icon-star'" class="icon-white"></i></button>
+          <button ng-switch-when="true" class="btn btn-danger" ng-click="removeFavourite(food['_id'])">Poista suosikeista <i ng-class="favouriteLoading ? 'icon-refresh icon-spin' : 'icon-remove'" class="icon-white"></i></button>
+          <button ng-switch-default class="btn btn-warning" ng-click="addFavourite(food['_id'], food.name)">Lisää suosikkeihin <i ng-class="favouriteLoading ? 'icon-refresh icon-spin' : 'icon-star'" class="icon-white"></i></button>
         </span>
       </div>
       <br>
@@ -26,14 +26,15 @@
           <td>{{food.data[item][1]}}</td>
         </tr>
         <!-- <tr class="info">
-          <td colspan="3">Vitamiinit</td>
-        </tr>
-        <tr ng-repeat='item in ["C-vitamiini", "D-vitamiini"]'>
-          <td>{{item}}</td>
-          <td>{{food.data[item][0] / 100 * bite.amount | number:1}}</td>
-          <td>{{food.data[item][1]}}</td>
-        </tr> -->
+<td colspan="3">Vitamiinit</td>
+</tr>
+<tr ng-repeat='item in ["C-vitamiini", "D-vitamiini"]'>
+<td>{{item}}</td>
+<td>{{food.data[item][0] / 100 * bite.amount | number:1}}</td>
+<td>{{food.data[item][1]}}</td>
+</tr> -->
       </table>
+    <input type="date" />
     </div>
     <div ng-switch-when="true">Lataa...</div>
     <div ng-switch-default><i class="icon icon-arrow-left"></i> Valitse elintarvike</div>
@@ -101,4 +102,3 @@
     </div>
 
   </div> <!-- /.row -->
-

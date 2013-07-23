@@ -9,7 +9,7 @@
 
     $scope.logout = function () {
         UserService.logout();
-        $location.path("/");
+        $location.path("/login");
     }
 
     $scope.navClass = function(link) {
@@ -27,38 +27,41 @@
 
     /** "yyyyMMdd" -> Date object */
     function dateFromStr(dateStr) {
-        return new Date(dateStr.substring(0,4), (dateStr.substring(4,6) - 1),
+        return new Date(dateStr.substring(0, 4), dateStr.substring(4, 6) - 1,
             dateStr.substring(6));
     }
 
     function getBites() {
         API.fetchSigned("/user/bites/" + date, "GET")
-        .success(function(response) {
+        .success(function (response) {
             if (response.status == "success") {
                 $scope.bites = response.data;
             } else {
                 $location.path("/");
             }
         })
-        .error(function(response) {
+        .error(function (response) {
             $location.path("/");
         });
     }
 
-    $scope.removeBite = function(bite) {
+    $scope.removeBite = function (bite) {
         bite.loading = true;
         var biteId = bite["_id"];
         API.fetchSigned("/user/bites/" + biteId, "DELETE")
-        .success(function(response) {
+        .success(function (response) {
             if (response.status == "success") {
                 $scope.bites.splice($scope.bites.indexOf(bite), 1);
+                if ($scope.bites.length == 0) {
+                    $location.path("/");
+                }
             } else {
                 alert("Poistaminen epäonnistui!");
                 console.log("BITE REMOVE ERROR=" + JSON.stringify(response));
                 bite.loading = false;
             }
         })
-        .error(function(response) {
+        .error(function (response) {
             alert("Poistaminen epäonnistui!");
             console.log("BITE REMOVE ERROR=" + JSON.stringify(response));
             bite.loading = false;
@@ -73,23 +76,23 @@
     $scope.loginTabSelected = true;
 
     /** Make an arbitrary request to test connecion, show error if failed. */
-    $scope.establishServerConnection = function() {
+    $scope.establishServerConnection = function () {
         $scope.connectionStatus = "loading";
         API.fetch("/foods?q=makkara")
-        .success(function() {
+        .success(function () {
             $scope.connectionStatus = "connected";
-        }).error(function() {
+        }).error(function () {
             $scope.connectionStatus = "failed";
         });
     };
 
-    $scope.login = function(username, password) {
+    $scope.login = function (username, password) {
         $scope.loading = true;
         UserService.setCredentials(username, password);
         API.fetchSigned("/user")
-        .success(function(response) {
+        .success(function (response) {
             if (response.status == "success") {
-                angular.element(".backstretch").remove();  // Remove login page background TODO: directive?
+                angular.element(".backstretch").remove(); // Remove login page background TODO: directive?
                 UserService.setGoals(response.data.goals);
                 UserService.setFavs(response.data.favs);
                 UserService.isLoggedIn(true);
@@ -100,7 +103,7 @@
                 $scope.loading = false;
             }
         })
-        .error(function(data) {
+        .error(function (data) {
             console.log("LOGIN ERROR=" + JSON.stringify(data));
             UserService.logout();
             $scope.message = "Kirjautuminen epäonnistui";
@@ -108,7 +111,7 @@
         });
     };
 
-    $scope.register = function(form) {
+    $scope.register = function (form) {
         if (form.password != form.passwordAgain) {
             $scope.registerMessage = "Varmistus ei täsmää salasanaa";
             return;
@@ -126,9 +129,9 @@
         };
 
         API.fetch("/user/register", "POST", data)
-        .success(function(response) {
+        .success(function (response) {
             if (response.status == "success") {
-                angular.element(".backstretch").remove();  // Remove login page background TODO: directive?
+                angular.element(".backstretch").remove(); // Remove login page background TODO: directive?
                 UserService.isLoggedIn(true);
                 $location.path("/goals");
             } else {
@@ -147,7 +150,7 @@
                 $scope.loading = false;
             }
         })
-        .error(function(data) {
+        .error(function (data) {
             console.log("REGISTER ERROR=" + JSON.stringify(data));
             UserService.logout();
             $scope.registerMessage = "Rekisteröinti epäonnistui";
@@ -156,7 +159,7 @@
         });
     };
 
-    $scope.toggleDisclaimer = function(isVisible) {
+    $scope.toggleDisclaimer = function (isVisible) {
         $scope.disclaimerIsVisible = isVisible;
     };
 
@@ -164,7 +167,7 @@
 })
 
 // Goals - user is redirected here after registration to set daily calorie goals etc.
-.controller("GoalsCtrl", function($scope, $location, API, UserService) {
+.controller("GoalsCtrl", function ($scope, $location, API, UserService) {
     $scope.existingGoals = UserService.getGoals();
     $scope.newUser = !$scope.existingGoals;
 
@@ -186,11 +189,11 @@
 
     $scope.isFemale = false;
 
-    $scope.cancelUpdate = function() {
+    $scope.cancelUpdate = function () {
         $location.path("/");
     };
 
-    $scope.calculateBMR = function(age, height, weight, activityLevel, isFemale) {
+    $scope.calculateBMR = function (age, height, weight, activityLevel, isFemale) {
         var base;
         var activityMultipliers = [1.2, 1.375, 1.55, 1.725, 1.9];
         if (isFemale) {
@@ -202,18 +205,18 @@
         return $scope.bmr;
     };
 
-    $scope.resetDistribution = function() {
-        $scope.distribution = {min: 30, max: 85};
+    $scope.resetDistribution = function () {
+        $scope.distribution = { min: 30, max: 85 };
     };
 
-    $scope.setGoals = function() {
+    $scope.setGoals = function () {
         $scope.loadingGoals = true;
 
         var min = $scope.distribution.min;
         var max = $scope.distribution.max;
         var bmr = $scope.bmr;
 
-        if (_.some([min, max, bmr], function(e) { return !e || isNaN(e) || e < 1; })) {
+        if (_.some([min, max, bmr], function (e) { return !e || isNaN(e) || e < 1; })) {
             $scope.errorMessage = "Virheellinen syöte";
             $scope.loadingGoals = false;
             return;
@@ -227,7 +230,7 @@
         };
 
         API.fetchSigned("/user/goals", "POST", payload)
-        .success(function(response) {
+        .success(function (response) {
             if (response.status == "success") {
                 // Set goals, redirect to index page:
                 UserService.setGoals(payload);
@@ -237,7 +240,7 @@
             }
             $scope.loadingGoals = false;
         })
-        .error(function(response) {
+        .error(function (response) {
             console.log("SET GOALS ERROR=" + JSON.stringify(response));
             $scope.loadingGoals = false;
         });
@@ -247,7 +250,7 @@
 })
 
 // Index - list bites
-.controller("IndexCtrl", function($scope, $location, $timeout, API, UserService) {
+.controller("IndexCtrl", function ($scope, $location, $timeout, API, UserService) {
     // Initial sort order for bites
     $scope.order = "date";
     $scope.reverse = true;
@@ -255,7 +258,7 @@
 
     $scope.goToDatePage = function (date) {
         $location.path("/dates/" + date);
-    }
+    };
 
     /** Date object -> "yyyyMMdd" */
     function formatDate(d) {
@@ -269,12 +272,13 @@
     // Set slider handles' initial positions
     var today = new Date();
     $scope.slider = {
-        min: new Date(today.getFullYear(), today.getMonth(), today.getDate() -15),
+        min: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 15),
         max: new Date(today.getFullYear(), today.getMonth(), today.getDate())
     };
 
-    $scope.getBites = function() {
+    $scope.getBites = function () {
         if (!$scope.slider) {
+            console.log("slider not defined error");
             return;
         }
 
@@ -285,17 +289,17 @@
         };
 
         API.fetchSigned("/user/days", "GET", params)
-        .success(function(response) {
+        .success(function (response) {
             if (response.status == "success") {
                 var date, dates = response.data;
-                dates.forEach(function(d) {
+                dates.forEach(function (d) {
                     date = new Date(d.date);
                     date.setHours(0);
                     d.date = date;
                     d.apiDate = formatDate(date);
                 });
 
-                $scope.dates = dates.sort(function(a,b){
+                $scope.dates = dates.sort(function (a, b) {
                     return a.date - b.date;
                 });
 
@@ -307,17 +311,17 @@
             }
             $scope.bitesLoading = false;
         })
-        .error(function(response) {
+        .error(function (response) {
             console.log("BITES ERROR=" + JSON.stringify(response));
             $scope.bitesLoading = false;
         });
     };
 
-    $scope.removeBite = function(bite) {
+    $scope.removeBite = function (bite) {
         bite.loading = true;
         var biteId = bite["_id"];
         API.fetchSigned("/user/bites/" + biteId, "DELETE")
-        .success(function(response) {
+        .success(function (response) {
             if (response.status == "success") {
                 $scope.bites.splice($scope.bites.indexOf(bite), 1);
                 processChartData();
@@ -327,7 +331,7 @@
                 bite.loading = false;
             }
         })
-        .error(function(response) {
+        .error(function (response) {
             alert("Poistaminen epäonnistui!");
             console.log("BITE REMOVE ERROR=" + JSON.stringify(response));
             bite.loading = false;
@@ -335,11 +339,11 @@
     };
 
     /**
-     * Initialize scope variables lineChartData and barChartData, which are
-     * bound to the charts.
-     */
-     function processChartData() {
-        var lineData = {protein: [], carbs: [], fat: [], kcal: []};
+* Initialize scope variables lineChartData and barChartData, which are
+* bound to the charts.
+*/
+    function processChartData() {
+        var lineData = { protein: [], carbs: [], fat: [], kcal: [] };
         var barData = [];
         var dateObj;
         var attr;
@@ -354,16 +358,17 @@
                 attr = Object.keys(lineData)[j];
                 lineData[attr].push({
                     date: dateObj.date,
-                    value: dateObj[attr]});
+                    value: dateObj[attr]
+                });
             }
 
             barData.push({
                 date: dateObj.date,
                 amounts: [
-                { name: "kcal", value: Math.floor(100 * dateObj.kcal / goals.kcal)},
-                { name: "carbs", value: Math.floor(100 * dateObj.carbs / goals.carbs)},
-                { name: "fat", value: Math.floor(100 * dateObj.fat / goals.fat)},
-                { name: "protein", value: Math.floor(100 * dateObj.protein / goals.protein)}
+                { name: "kcal", value: Math.floor(100 * dateObj.kcal / goals.kcal) },
+                { name: "carbs", value: Math.floor(100 * dateObj.carbs / goals.carbs) },
+                { name: "fat", value: Math.floor(100 * dateObj.fat / goals.fat) },
+                { name: "protein", value: Math.floor(100 * dateObj.protein / goals.protein) }
                 ]
             });
         }
@@ -383,15 +388,15 @@
     }
 
     /**
-     * Blocks the buttons that hightlight chart lines or bars for a second,
-     * so that a transition doesn't get interrupted by the user.
-     */
+* Blocks the buttons that hightlight chart lines or bars for a second,
+* so that a transition doesn't get interrupted by the user.
+*/
     function blockChartButtons() {
         $scope.chartLoading = true;
-        $timeout(function() { $scope.chartLoading = false; }, 1000);
+        $timeout(function () { $scope.chartLoading = false; }, 1000);
     }
 
-    $scope.toggleChart = function() {
+    $scope.toggleChart = function () {
         blockChartButtons();
         $scope.chartToShow = $scope.chartToShow == "linechart" ? "barchart" : "linechart";
     };
@@ -403,26 +408,26 @@
 
 
 // Search foods, list results, show food details
-.controller("FoodSearchCtrl", function($scope, $http, $timeout, $window, API) {
-    $scope.bite = {amount: 100};  // Initial portion size is 100g
+.controller("FoodSearchCtrl", function ($scope, $http, $timeout, $window, API) {
+    $scope.bite = { amount: 100 }; // Initial portion size is 100g
     var keyPressIndex = 0;
 
     // Search foods, list results
-    $scope.search = function(query){
+    $scope.search = function (query) {
         keyPressIndex++;
         if ($scope.queryLoading || query.length < 4) {
             return;
         }
 
         var savedKeyPressIndex = keyPressIndex;
-        $timeout(function() {
+        $timeout(function () {
             if (savedKeyPressIndex < keyPressIndex) {
                 return;
             }
             $scope.queryLoading = true;
 
             API.fetch("/foods?q=" + encodeURI(query))
-            .success(function(response) {
+            .success(function (response) {
                 if (response.status == "success") {
                     $scope.results = response.data;
                     $scope.activeTab = "results";
@@ -431,7 +436,7 @@
                 }
                 $scope.queryLoading = false;
             })
-            .error(function(response) {
+            .error(function (response) {
                 console.log("FOOD QUERY ERROR=" + JSON.stringify(response));
                 $scope.queryLoading = false;
             });
@@ -439,21 +444,21 @@
     };
 
     // Check whether given food is in favourites
-    $scope.foodInFavourites = function(fid) {
+    $scope.foodInFavourites = function (fid) {
         if ($scope.favourites === undefined || $scope.favourites == []) {
             return false;
         }
-        return $scope.favourites.some(function(obj) {
+        return $scope.favourites.some(function (obj) {
             return obj.fid == fid;
         });
     };
 
     // Show food details
-    $scope.selectFood = function(fid){
+    $scope.selectFood = function (fid) {
         $scope.isFoodLoading = true;
 
         API.fetch("/foods/" + fid)
-        .success(function(response){
+        .success(function (response) {
             if (response.status == "success") {
                 $scope.food = response.data;
                 $scope.isFoodLoading = false;
@@ -463,26 +468,26 @@
             }
             $scope.isFoodLoading = false;
         })
-        .error(function(response) {
+        .error(function (response) {
             console.log("FOOD SELECT ERROR=" + JSON.stringify(response));
         });
     };
 
-    // Modal configuration and methods  // TODO into a directive
-    $("#modal").modal({show: false});
+    // Modal configuration and methods // TODO into a directive
+    $("#modal").modal({ show: false });
 
-    $scope.openModal = function() {
+    $scope.openModal = function () {
         var date = new Date();
-        $scope.addStatus = "started";  // started|loading|error|success
+        $scope.addStatus = "started"; // started|loading|error|success
         $scope.bite.date = date.getDate() + "." + (date.getMonth() + 1) + "." + date.getFullYear();
         $("#modal").modal("show");
     };
 
-    $scope.closeModal = function() {
+    $scope.closeModal = function () {
         $("#modal").modal("hide");
     };
 
-    $scope.addBite = function() {
+    $scope.addBite = function () {
         var date = $scope.selectedDate;
         console.log("$scope.selectedDate=" + $scope.selectedDate);
 
@@ -499,7 +504,7 @@
         $scope.addStatus = "loading";
 
         API.fetchSigned("/user/bites", "POST", data)
-        .success(function(response) {
+        .success(function (response) {
             if (response.status == "success") {
                 $scope.addStatus = "success";
             } else {
@@ -507,52 +512,52 @@
                 console.log("BITE ADD ERROR=" + JSON.stringify(response));
             }
         })
-        .error(function(response) {
+        .error(function (response) {
             console.log("BITE ADD ERROR=" + JSON.stringify(response));
             $scope.addStatus = "error";
         });
     };
 
-    $scope.getFavourites = function() {
+    $scope.getFavourites = function () {
         API.fetchSigned("/user/favs")
-        .success(function(response) {
+        .success(function (response) {
             if (response.status == "success") {
                 $scope.favourites = response.data;
             } else {
                 console.log("GET FAVOURITES ERROR=" + JSON.stringify(response));
             }
-        }).error(function(response) {
+        }).error(function (response) {
             console.log("GET FAVOURITES ERROR=" + JSON.stringify(response.data));
         });
     };
 
-    $scope.addFavourite = function(fid, name) {
+    $scope.addFavourite = function (fid, name) {
         if ($scope.foodInFavourites(fid)) {
             return;
         }
 
         $scope.favouriteLoading = true;
         API.fetchSigned("/user/favs/" + fid, "POST")
-        .success(function(response) {
+        .success(function (response) {
             if (response.status == "success") {
-                $scope.favourites.push({fid: fid, name: name});
+                $scope.favourites.push({ fid: fid, name: name });
             } else {
                 console.log("ADD FAVOURITE ERROR=" + JSON.stringify(response));
             }
             $scope.favouriteLoading = false;
         })
-        .error(function(response) {
+        .error(function (response) {
             console.log("ADD FAVOURITE ERROR=" + JSON.stringify(response));
             $scope.favouriteLoading = false;
         });
     };
 
-    $scope.removeFavourite = function(fid) {
+    $scope.removeFavourite = function (fid) {
         $scope.favouriteLoading = true;
         API.fetchSigned("/user/favs/" + fid, "DELETE")
-        .success(function(response) {
+        .success(function (response) {
             if (response.status == "success") {
-                $scope.favourites = $scope.favourites.filter(function(obj) {
+                $scope.favourites = $scope.favourites.filter(function (obj) {
                     return obj.fid != fid;
                 });
             } else {
@@ -560,22 +565,22 @@
             }
             $scope.favouriteLoading = false;
         })
-        .error(function(response) {
+        .error(function (response) {
             console.log("REMOVE FAVOURITE ERROR=" + JSON.stringify(response));
             $scope.favouriteLoading = false;
         });
     };
 
-    $scope.getTopFoods = function() {
+    $scope.getTopFoods = function () {
         API.fetch("/topfoods")
-        .success(function(response){
+        .success(function (response) {
             if (response.status == "success") {
                 $scope.topFoods = response.data;
             } else {
                 console.log("TOP10 ERROR=" + JSON.stringify(response));
             }
         })
-        .error(function(response) {
+        .error(function (response) {
             console.log("TOP10 ERROR=" + JSON.stringify(response));
         });
     };

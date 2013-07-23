@@ -103,7 +103,6 @@
     <Content Include="js\directives.js" />
     <Content Include="js\filters.js" />
     <Content Include="js\services.js" />
-    <Content Include="lib\angular-ui-bootstrap-0.3.0.min.js" />
     <Content Include="lib\angular-v1.1.5.js" />
     <Content Include="lib\bootstrap.js" />
     <Content Include="lib\crypto_hmac_sha1.js" />

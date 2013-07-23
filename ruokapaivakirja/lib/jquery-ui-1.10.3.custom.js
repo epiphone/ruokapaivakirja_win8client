@@ -1045,7 +1045,9 @@ $.position = {
 			div = $( "<div style='display:block;width:50px;height:50px;overflow:hidden;'><div style='height:100px;width:auto;'></div></div>" ),
 			innerDiv = div.children()[0];
 
-		$( "body" ).append( div );
+		MSApp.execUnsafeLocalFunction(function () {
+		    $("body").append(div);
+		});
 		w1 = innerDiv.offsetWidth;
 		div.css( "overflow", "scroll" );
 
@@ -1453,16 +1455,18 @@ $.ui.position = {
 	for ( i in testElementStyle ) {
 		testElement.style[ i ] = testElementStyle[ i ];
 	}
-	testElement.appendChild( div );
-	testElementParent = body || document.documentElement;
-	testElementParent.insertBefore( testElement, testElementParent.firstChild );
-
+	MSApp.execUnsafeLocalFunction(function () {
+	    testElement.appendChild(div);
+	    testElementParent = body || document.documentElement;
+	    testElementParent.insertBefore(testElement, testElementParent.firstChild);
+	});
 	div.style.cssText = "position: absolute; left: 10.7432222px;";
 
 	offsetLeft = $( div ).offset().left;
 	$.support.offsetFractions = offsetLeft > 10 && offsetLeft < 11;
-
-	testElement.innerHTML = "";
+	MSApp.execUnsafeLocalFunction(function () {
+	    testElement.innerHTML = "";
+	});
 	testElementParent.removeChild( testElement );
 })();
 
@@ -1622,8 +1626,10 @@ $.extend(Datepicker.prototype, {
 
 	/* Attach the date picker to an input field. */
 	_connectDatepicker: function(target, inst) {
-		var input = $(target);
-		inst.append = $([]);
+	    var input = $(target);
+	    MSApp.execUnsafeLocalFunction(function () {
+	        inst.append = $([]);
+	    });
 		inst.trigger = $([]);
 		if (input.hasClass(this.markerClassName)) {
 			return;
@@ -1644,15 +1650,16 @@ $.extend(Datepicker.prototype, {
 		var showOn, buttonText, buttonImage,
 			appendText = this._get(inst, "appendText"),
 			isRTL = this._get(inst, "isRTL");
-
-		if (inst.append) {
-			inst.append.remove();
-		}
-		if (appendText) {
-			inst.append = $("<span class='" + this._appendClass + "'>" + appendText + "</span>");
-			input[isRTL ? "before" : "after"](inst.append);
-		}
-
+		var thatMS = this;
+		MSApp.execUnsafeLocalFunction(function () {
+		    if (inst.append) {
+		        inst.append.remove();
+		    }
+		    if (appendText) {
+		        inst.append = $("<span class='" + thatMS._appendClass + "'>" + appendText + "</span>");
+		        input[isRTL ? "before" : "after"](inst.append);
+		    }
+		});
 		input.unbind("focus", this._showDatepicker);
 
 		if (inst.trigger) {
@@ -1721,7 +1728,10 @@ $.extend(Datepicker.prototype, {
 		if (divSpan.hasClass(this.markerClassName)) {
 			return;
 		}
-		divSpan.addClass(this.markerClassName).append(inst.dpDiv);
+		var thatMS = this;
+		MSApp.execUnsafeLocalFunction(function () {
+		    divSpan.addClass(thatMS.markerClassName).append(inst.dpDiv);
+		});
 		$.data(target, PROP_NAME, inst);
 		this._setDate(inst, this._getDefaultDate(inst), true);
 		this._updateDatepicker(inst);
@@ -1755,7 +1765,10 @@ $.extend(Datepicker.prototype, {
 			this._dialogInput = $("<input type='text' id='" + id +
 				"' style='position: absolute; top: -100px; width: 0px;'/>");
 			this._dialogInput.keydown(this._doKeyDown);
-			$("body").append(this._dialogInput);
+			var thatMS = this;
+			MSApp.execUnsafeLocalFunction(function () {
+			    $("body").append(this._dialogInput);
+			});
 			inst = this._dialogInst = this._newInst(this._dialogInput, false);
 			inst.settings = {};
 			$.data(this._dialogInput[0], PROP_NAME, inst);
@@ -1802,7 +1815,9 @@ $.extend(Datepicker.prototype, {
 		nodeName = target.nodeName.toLowerCase();
 		$.removeData(target, PROP_NAME);
 		if (nodeName === "input") {
-			inst.append.remove();
+		    MSApp.execUnsafeLocalFunction(function () {
+		        inst.append.remove();
+		    });
 			inst.trigger.remove();
 			$target.removeClass(this.markerClassName).
 				unbind("focus", this._showDatepicker).
@@ -2220,7 +2235,10 @@ $.extend(Datepicker.prototype, {
 	_updateDatepicker: function(inst) {
 		this.maxRows = 4; //Reset the max number of rows being displayed (see #7043)
 		instActive = inst; // for delegate hover events
-		inst.dpDiv.empty().append(this._generateHTML(inst));
+		var thatMS = this;
+		MSApp.execUnsafeLocalFunction(function () {
+		    inst.dpDiv.empty().append(thatMS._generateHTML(inst));
+		});
 		this._attachHandlers(inst);
 		inst.dpDiv.find("." + this._dayOverClass + " a").mouseover();
 
@@ -2338,8 +2356,11 @@ $.extend(Datepicker.prototype, {
 			if (this._inDialog) {
 				this._dialogInput.css({ position: "absolute", left: "0", top: "-100px" });
 				if ($.blockUI) {
-					$.unblockUI();
-					$("body").append(this.dpDiv);
+				    $.unblockUI();
+				    var thatMS = this;
+				    MSApp.execUnsafeLocalFunction(function () {
+				        $("body").append(this.dpDiv);
+				    });
 				}
 			}
 			this._inDialog = false;
@@ -3465,8 +3486,10 @@ $.fn.datepicker = function(options){
 	}
 
 	/* Append datepicker main container to body if not exist. */
-	if ($("#"+$.datepicker._mainDivId).length === 0) {
-		$("body").append($.datepicker.dpDiv);
+	if ($("#" + $.datepicker._mainDivId).length === 0) {
+	    MSApp.execUnsafeLocalFunction(function () {
+	        $("body").append($.datepicker.dpDiv);
+	    });
 	}
 
 	var otherArgs = Array.prototype.slice.call(arguments, 1);
@@ -3565,7 +3588,6 @@ $.widget( "ui.slider", $.ui.mouse, {
 		for ( i = existingHandles.length; i < handleCount; i++ ) {
 			handles.push( handle );
 		}
-
 		this.handles = existingHandles.add( $( handles.join( "" ) ).appendTo( this.element ) );
 
 		this.handle = this.handles.eq( 0 );
