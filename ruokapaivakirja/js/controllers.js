@@ -412,6 +412,15 @@
     $scope.bite = { amount: 100 }; // Initial portion size is 100g
     var keyPressIndex = 0;
 
+    // TODO: into a service
+    function formatDate(d) {
+        var monthStr = (d.getMonth() + 1).toString(),
+        month = monthStr.length == 1 ? "0" + monthStr : monthStr,
+        day = d.getDate().toString().length == 1 ? "0" + d.getDate() : d.getDate();
+
+        return d.getFullYear() + month + day;
+    }
+
     // Search foods, list results
     $scope.search = function (query) {
         keyPressIndex++;
@@ -480,6 +489,7 @@
         var date = new Date();
         $scope.addStatus = "started"; // started|loading|error|success
         $scope.bite.date = date.getDate() + "." + (date.getMonth() + 1) + "." + date.getFullYear();
+        $scope.selectedDate = date;
         $("#modal").modal("show");
     };
 
@@ -488,13 +498,13 @@
     };
 
     $scope.addBite = function () {
-        var date = $scope.selectedDate;
-        console.log("$scope.selectedDate=" + $scope.selectedDate);
-
-        if (!date) {
-            alert("Valitse päivämäärä");
+        if (!$scope.selectedDate) {
+            $scope.closeModal();
             return;
         }
+
+        var date = formatDate($scope.selectedDate);
+        console.log("$scope.selectedDate=" + $scope.selectedDate);
 
         var data = {
             fid: $scope.food["_id"],

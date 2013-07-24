@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/2010/manifest">
-  <Identity Name="27028AleksiP.Ruokapivkirja" Version="1.0.0.9" Publisher="CN=46CF9CBB-1DBA-4D34-8D21-D74E1383A5CA" />
+  <Identity Name="27028AleksiP.Ruokapivkirja" Version="1.0.0.10" Publisher="CN=46CF9CBB-1DBA-4D34-8D21-D74E1383A5CA" />
   <Properties>
     <DisplayName>Ruokapäiväkirja</DisplayName>
     <PublisherDisplayName>AleksiP</PublisherDisplayName>
@@ -15,7 +15,7 @@
   </Resources>
   <Applications>
     <Application Id="App" StartPage="default.html">
-      <VisualElements DisplayName="Ruokapäiväkirja" Logo="images\logo.png" SmallLogo="images\smalllogo.png" Description="Sovellus ruokavalion seurantaa varten." ForegroundText="light" BackgroundColor="#464646">
+      <VisualElements DisplayName="Ruokapäiväkirja" Logo="images\logo.png" SmallLogo="images\smalllogo.png" Description="Sovellus ruokavalion seurantaa varten." ForegroundText="light" BackgroundColor="#47A3FF">
         <DefaultTile ShowName="allLogos" WideLogo="images\widelogo.png" ShortName="RPK" />
         <SplashScreen Image="images\splashscreen.png" />
         <InitialRotationPreference>

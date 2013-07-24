@@ -54,9 +54,9 @@
     <AppxManifest Include="package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
+    <Content Include="css\bootstrap-datepicker.css" />
     <Content Include="css\bootstrap-metro.css" />
     <Content Include="css\bootstrap-responsive.css" />
-    <Content Include="css\bootstrap-responsive.min.css" />
     <Content Include="css\bootstrap.css" />
     <Content Include="css\bootstrap.min.css" />
     <Content Include="css\font-awesome.css" />
@@ -103,7 +103,9 @@
     <Content Include="js\directives.js" />
     <Content Include="js\filters.js" />
     <Content Include="js\services.js" />
+    <Content Include="lib\angular-strap.js" />
     <Content Include="lib\angular-v1.1.5.js" />
+    <Content Include="lib\bootstrap-datepicker.js" />
     <Content Include="lib\bootstrap.js" />
     <Content Include="lib\crypto_hmac_sha1.js" />
     <Content Include="lib\crypto_sha1.js" />

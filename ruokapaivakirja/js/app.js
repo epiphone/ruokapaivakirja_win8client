@@ -10,7 +10,7 @@ Aleksi Pekkala (aleksi.v.a.pekkala@student.jyu.fi)
 
 MSApp.execUnsafeLocalFunction(function () {
     // Declare app level module which depends on filters, and services
-    angular.module("app", ["app.filters", "app.services", "app.directives", "app.controllers"])
+    angular.module("app", ["app.filters", "app.services", "app.directives", "app.controllers", "$strap.directives"])
     .config(function ($routeProvider, $httpProvider) {
 
         // Routing
