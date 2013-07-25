@@ -117,10 +117,6 @@
             return;
         }
 
-        var userApprovalGranted = window.confirm(
-            "Huom! Tietojen säilymistä yms. ylläpitoa ei voida taata.");
-        if (!userApprovalGranted) return;
-
         $scope.loading = true;
         UserService.setCredentials(form.username, form.password);
         var data = {
